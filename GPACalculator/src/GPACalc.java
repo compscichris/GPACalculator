@@ -1,17 +1,17 @@
-import java.util.ArrayList;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
-public class GPACalc 
+public class GPACalc
 {
-	
+
 	class Entry
 	{
 		private String name;
-		private int credits;
-		private char grade;
-		public Entry(String name, int credits, char grade)
+		private double credits;
+		private String grade;
+		public Entry(String name, double credits, String grade)
 		{
 			this.name = name;
 			this.credits = credits;
@@ -21,20 +21,20 @@ public class GPACalc
 		{
 			return this.name;
 		}
-		public int getCredits()
+		public double getCredits()
 		{
 			return this.credits;
 		}
-		public char getGrade()
+		public String getGrade()
 		{
 			return this.grade;
 		}
 	}
 	public ArrayList<Entry> courses;
-	
+
 	public GPACalc()
 	{
-		this.courses = new ArrayList<Entry>();
+		this.courses = new ArrayList<>();
 	}
 	public void readFromFile(String filename)
 	{
@@ -47,12 +47,13 @@ public class GPACalc
 			{
 				String line = reader.nextLine();
 				String[]parts = line.split(",");
-				char[] grade = parts[2].toCharArray();
-				int credit = Integer.parseInt(parts[1]);
-				Entry temp = new Entry(parts[0], credit, grade[0]);
+				String grade = parts[2];
+				double credit = Double.parseDouble(parts[1]);
+				Entry temp = new Entry(parts[0], credit, grade);
 				System.out.println(line);
 				this.courses.add(temp);
 			}
+			reader.close();
 		}
 		catch(FileNotFoundException e)
 		{
@@ -63,48 +64,69 @@ public class GPACalc
 	{
 		double total_credits = 0;
 		double cg_product = 0;
-		for(int i = 0; i < this.courses.size(); i++)
-		{
-			total_credits += this.courses.get(i).getCredits();
-			cg_product += getGradeVal(this.courses.get(i).getGrade())*this.courses.get(i).getCredits();;
+		for (Entry element : this.courses) {
+			total_credits += element.getCredits();
+			cg_product += getGradeVal(element.getGrade())*element.getCredits();
 		}
-		return cg_product/total_credits; 
+		return cg_product/total_credits;
 	}
 	public double calculateTC()
 	{
 		double total_credits = 0;
-		for(int i = 0; i < this.courses.size(); i++)
-		{
-			total_credits += this.courses.get(i).getCredits();
+		for (Entry element : this.courses) {
+			total_credits += element.getCredits();
 		}
-		return total_credits; 
+		return total_credits;
 	}
 	public double calculateCG()
 	{
 		double cg_product = 0;
-		for(int i = 0; i < this.courses.size(); i++)
-		{
-			cg_product += getGradeVal(this.courses.get(i).getGrade())*this.courses.get(i).getCredits();;
+		for (Entry element : this.courses) {
+			cg_product += getGradeVal(element.getGrade())*element.getCredits();
 		}
-		return cg_product; 
+		return cg_product;
 	}
-	public int getGradeVal(char val)
+	public double getGradeVal(String val)
 	{
-		if(val == 'A')
+		if(val.equals("A"))
 		{
 			return 4;
 		}
-		else if(val == 'B')
+		else if(val.equals("-A"))
+		{
+			return 3.7;
+		}
+		else if(val.equals("+B"))
+		{
+			return 3.3;
+		}
+		else if(val.equals("B"))
 		{
 			return 3;
 		}
-		else if(val == 'C')
+		else if(val.equals("-B"))
+		{
+			return 2.7;
+		}
+		else if(val.equals("+C"))
+		{
+			return 2.3;
+		}
+		else if(val.equals("C"))
 		{
 			return 2;
 		}
-		else if(val == 'D')
+		else if(val.equals("+D"))
+		{
+			return 1.3;
+		}
+		else if(val.equals("D"))
 		{
 			return 1;
+		}
+		else if(val.equals("-D"))
+		{
+			return 0.7;
 		}
 		else
 		{
@@ -114,7 +136,7 @@ public class GPACalc
 	public static void main(String[]args)
 	{
 		GPACalc calc = new GPACalc();
-		String fn = "C:\\Users\\Owner\\eclipse-workspace\\ThetaAI\\src\\majorclasses.csv";
+		String fn = "C:\\Users\\chr1s\\git\\git\\GPACalculator\\GPACalculator\\src\\majorclasses.csv";
 				//majorclasses.csv";
 		//AllCourses.csv
 		calc.readFromFile(fn);
